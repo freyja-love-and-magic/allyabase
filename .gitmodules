@@ -1,36 +1,36 @@
 [submodule "deployment/addie"]
 	path = deployment/addie
-	url = https://github.com/planet-nine-app/addie
+	url = git@github.com:freyja-love-and-magic/addie.git
 [submodule "deployment/aretha"]
 	path = deployment/aretha
-	url = https://github.com/planet-nine-app/aretha
+	url = git@github.com:freyja-love-and-magic/aretha.git
 [submodule "deployment/bdo"]
 	path = deployment/bdo
-	url = https://github.com/planet-nine-app/bdo
+	url = git@github.com:freyja-love-and-magic/bdo.git
 [submodule "deployment/continuebee"]
 	path = deployment/continuebee
-	url = https://github.com/planet-nine-app/continuebee
+	url = git@github.com:freyja-love-and-magic/continuebee.git
 [submodule "deployment/dolores"]
 	path = deployment/dolores
-	url = https://github.com/planet-nine-app/dolores
+	url = git@github.com:freyja-love-and-magic/dolores.git
 [submodule "deployment/fount"]
 	path = deployment/fount
-	url = https://github.com/planet-nine-app/fount
+	url = git@github.com:freyja-love-and-magic/fount.git
 [submodule "deployment/joan"]
 	path = deployment/joan
-	url = https://github.com/planet-nine-app/joan
+	url = git@github.com:freyja-love-and-magic/joan.git
 [submodule "deployment/julia"]
 	path = deployment/julia
-	url = https://github.com/planet-nine-app/julia
+	url = git@github.com:freyja-love-and-magic/julia.git
 [submodule "deployment/minnie"]
 	path = deployment/minnie
-	url = https://github.com/planet-nine-app/minnie
+	url = git@github.com:freyja-love-and-magic/minnie.git
 [submodule "deployment/pref"]
 	path = deployment/pref
-	url = https://github.com/planet-nine-app/pref
+	url = git@github.com:freyja-love-and-magic/pref.git
 [submodule "deployment/prof"]
 	path = deployment/prof
-	url = https://github.com/planet-nine-app/prof
+	url = git@github.com:freyja-love-and-magic/prof.git
 [submodule "deployment/sanora"]
 	path = deployment/sanora
-	url = https://github.com/planet-nine-app/sanora
+	url = git@github.com:freyja-love-and-magic/sanora.git

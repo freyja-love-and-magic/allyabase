@@ -1,14 +1,60 @@
 [build]
+  # scripts/prepare-services.sh installs the sibling service deps (cors,
+  # fount-js, bdo-js, sessionless-node, stripe, dayjs, ws, etc.) that
+  # ../services.js's imports pull in but that aren't in this gateway's
+  # own package.json — esbuild needs them resolvable from each imported
+  # file's node_modules tree before it can bundle. Runs on both a manual
+  # `netlify deploy` from a fresh clone and any CI-triggered deploy.
+  command = "bash scripts/prepare-services.sh"
   functions = "netlify/functions"
 
 [functions]
-  node_bundler = "esbuild"
-  # jsdom (pulled in transitively by bdo.js's teleportation-js import, used to
-  # strip JS from user-submitted HTML) loads a worker script
-  # (xhr-sync-worker.js) from disk at runtime rather than via a traceable
-  # import, so esbuild can't bundle it - ship it unbundled from node_modules
-  # instead, which is the standard fix for this known jsdom+esbuild issue.
-  external_node_modules = ["jsdom"]
+  # `zisi` = "zip-it-and-ship-it" without esbuild — packages the function
+  # with its resolved node_modules preserved, no bundling, no CJS
+  # transformation. We need this because:
+  #   - Several sibling services use top-level `await` in their
+  #     src/persistence/db.js init, which esbuild can't emit under its
+  #     default CJS output format.
+  #   - The bundled service tree pulls in file:-linked client packages
+  #     (addie-js) whose deps live at different nodes on the resolution
+  #     tree than esbuild expects; zisi's node-native resolution handles
+  #     that correctly.
+  # Cost is a larger function bundle + slower cold start, but this is a
+  # background service, not a latency-sensitive endpoint. jsdom (previously
+  # in external_node_modules for the esbuild+jsdom worker-file issue) no
+  # longer needs the exemption under zisi.
+  node_bundler = "zisi"
+  # Force-include each sibling service's package.json — zisi bundles the
+  # .js files it discovers via imports, but does NOT auto-include the
+  # sibling package.json that tells Node "these .js files are ESM"
+  # (`"type": "module"`). Without them, Node treats the bundled files as
+  # CJS and every `import` statement throws "Cannot use import statement
+  # outside a module" at runtime. Paths are relative to this netlify.toml.
+  included_files = [
+    "../bdo/src/server/node/package.json",
+    "../addie/src/server/node/package.json",
+    "../fount/src/server/node/package.json",
+    "../sanora/src/server/node/package.json",
+    "../pref/src/server/node/package.json",
+    "../joan/src/server/node/package.json",
+    "../continuebee/src/server/node/package.json",
+    "../aretha/src/server/node/package.json",
+    "../julia/src/server/node/package.json",
+    "../dolores/src/server/node/package.json",
+    "../savage/src/server/node/package.json",
+    "../eumachia/src/server/node/package.json",
+    # Non-JS assets that services read from disk at runtime (zisi bundles
+    # .js via import traversal but does NOT auto-include arbitrary
+    # readFileSync targets — see /var/task/... paths in Netlify Function
+    # logs for what services actually reach for). Explicit list, NOT a
+    # **/** glob: dolores/public has 80+MB of audio content that would
+    # blow through Lambda's 250MB unzipped-code limit.
+    "../sanora/src/server/node/templates/*.html",
+    "../sanora/public/form-demo.html",
+    "../sanora/public/form-widget-docs.html",
+    "../dolores/public/audio-player.html",
+    "../dolores/public/post-widget-docs.html"
+  ]
 
 # All 11 bundled services are dispatched by path prefix inside gateway.js's
 # own Express instance (see services.js) - forward every request to the one

@@ -21,7 +21,10 @@ import continuebeeApp from '../continuebee/src/server/node/continuebee.js';
 import arethaApp from '../aretha/src/server/node/aretha.js';
 import juliaApp from '../julia/src/server/node/julia.js';
 import doloresApp from '../dolores/src/server/node/dolores.js';
-import minnieApp from '../minnie/src/server/node/minnie.js';
+// minnie deliberately omitted — it's an SMTP server (long-lived TCP
+// daemon on port 2525), not an HTTP Express app, so it can't run
+// inside a Lambda function. If it ever gains an HTTP surface, add
+// it back here.
 import savageApp from '../savage/src/server/node/savage.js';
 import eumachiaApp from '../eumachia/src/server/node/eumachia.js';
 
@@ -45,7 +48,6 @@ const SERVICES = {
   julia: { app: juliaApp, port: 3000 },
   dolores: { app: doloresApp, port: 3007 },
   sanora: { app: sanoraApp, port: 7243 },
-  minnie: { app: minnieApp, port: 2525 },
   savage: { app: savageApp, port: 3009 },
   eumachia: { app: eumachiaApp, port: 3011 },
 };
