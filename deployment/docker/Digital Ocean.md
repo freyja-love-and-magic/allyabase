@@ -17,7 +17,7 @@
       apt-cache policy docker-ce
       sudo apt install docker-ce
      sudo systemctl status docker
-     git clone git@github.com:planet-nine-app/allyabase.git
+     git clone git@github.com:freyja-love-and-magic/allyabase.git
      cd allyabase/deployment/docker
      ./build_and_run.sh
      apt install nginx

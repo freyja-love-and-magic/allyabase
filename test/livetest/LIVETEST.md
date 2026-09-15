@@ -26,5 +26,5 @@ We will perform at least one transaction via [MAGIC][magic] that splits payment 
 The test will take place on Twitch so that people can watch it wherever they are. 
 I do not have a time yet, but it should be before the end of the month.
 
-[sessionless]: https://www.github.com/planet-nine-app/sessionless
+[sessionless]: https://www.github.com/freyja-love-and-magic/sessionless
 [addie-js]: https://www.npmjs.com/package/addie-js

@@ -16,7 +16,13 @@ WIKI_BIN="$(which wiki)"
 NODE_BIN="$(which node)"
 
 echo "Installing allyabase microservices to $SERVICES_DIR..."
-allyabase-setup "$SERVICES_DIR"
+# --dir, not a positional: SERVICES_DIR already ends in 'allyabase', and the
+# positional form appends '/allyabase' again — this was installing everything
+# into /var/lib/allyabase/allyabase.
+#
+# Pass ALLYABASE_SERVICES=a,b,c to install a subset; bdo, continuebee, and
+# fount always come along. `allyabase-setup --list` shows what's available.
+allyabase-setup --dir="$SERVICES_DIR" ${ALLYABASE_SERVICES:+--services="$ALLYABASE_SERVICES"}
 
 # ── Federated Wiki as a systemd service ───────────────────────────────────────
 # wiki-plugin-allyabase calls "pm2 stop all" on startup to reset services.

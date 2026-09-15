@@ -5,16 +5,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Service repository URLs and descriptions
     const serviceUrls = {
-        'addie': 'https://github.com/planet-nine-app/addie',
-        'aretha': 'https://github.com/planet-nine-app/aretha',
-        'bdo': 'https://github.com/planet-nine-app/bdo',
-        'continuebee': 'https://github.com/planet-nine-app/continuebee',
-        'dolores': 'https://github.com/planet-nine-app/dolores',
-        'fount': 'https://github.com/planet-nine-app/fount',
-        'joan': 'https://github.com/planet-nine-app/joan',
-        'julia': 'https://github.com/planet-nine-app/julia',
-        'pref': 'https://github.com/planet-nine-app/pref',
-        'sanora': 'https://github.com/planet-nine-app/sanora'
+        'addie': 'https://github.com/freyja-love-and-magic/addie',
+        'aretha': 'https://github.com/freyja-love-and-magic/aretha',
+        'bdo': 'https://github.com/freyja-love-and-magic/bdo',
+        'continuebee': 'https://github.com/freyja-love-and-magic/continuebee',
+        'dolores': 'https://github.com/freyja-love-and-magic/dolores',
+        'fount': 'https://github.com/freyja-love-and-magic/fount',
+        'joan': 'https://github.com/freyja-love-and-magic/joan',
+        'julia': 'https://github.com/freyja-love-and-magic/julia',
+        'pref': 'https://github.com/freyja-love-and-magic/pref',
+        'sanora': 'https://github.com/freyja-love-and-magic/sanora'
     };
 
     // Cache management
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const repoUrl = serviceUrls[serviceName];
                 const repoName = repoUrl.split('/').pop();
                 
-                const fetchPromise = fetch(`https://api.github.com/repos/planet-nine-app/${repoName}`)
+                const fetchPromise = fetch(`https://api.github.com/repos/freyja-love-and-magic/${repoName}`)
                     .then(response => response.json())
                     .then(data => {
                         descriptions[serviceName] = data.description || 'No description available';

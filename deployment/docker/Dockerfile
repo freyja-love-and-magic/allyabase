@@ -4,65 +4,36 @@ WORKDIR /usr/src/app
 
 RUN apt-get update && apt-get install -y git vim
 
-RUN git clone https://www.github.com/planet-nine-app/addie.git addie
-RUN git clone https://www.github.com/planet-nine-app/aretha.git aretha
-RUN git clone https://www.github.com/planet-nine-app/bdo.git bdo
-RUN git clone https://www.github.com/planet-nine-app/continuebee.git continuebee
-RUN git clone https://www.github.com/planet-nine-app/dolores.git dolores
-RUN git clone https://www.github.com/planet-nine-app/fount.git fount
-RUN git clone https://www.github.com/planet-nine-app/joan.git joan
-RUN git clone https://www.github.com/planet-nine-app/julia.git julia
-RUN git clone https://www.github.com/planet-nine-app/minnie.git minnie
-RUN git clone https://www.github.com/planet-nine-app/pref.git pref
-RUN git clone https://www.github.com/planet-nine-app/sanora.git sanora
+# Services are cloned and installed by allyabase_setup.sh, which owns the
+# service list, each service's default port, and its env. This used to be 11
+# hardcoded `git clone` lines plus 11 `WORKDIR`/`npm install` pairs that had to
+# be edited by hand whenever a service was added — and which silently omitted
+# prof, savage, and eumachia.
+#
+# ALLYABASE_SERVICES picks a subset at build time; bdo, continuebee, and fount
+# are always installed. Clone URLs come from the setup script's manifest, so
+# they don't need repeating here.
+ARG ALLYABASE_SERVICES=""
+RUN git clone https://www.github.com/freyja-love-and-magic/allyabase.git allyabase
+RUN chmod +x /usr/src/app/allyabase/deployment/allyabase_setup.sh
 
-EXPOSE 2525
-EXPOSE 2999
-EXPOSE 3000
-EXPOSE 3001
-EXPOSE 3002
-EXPOSE 3003
-EXPOSE 3004
-EXPOSE 3005
-EXPOSE 3007
-EXPOSE 7243
-EXPOSE 7277
+# Every port in allyabase_setup.sh's manifest, plus the docker-only apps.
+# The old list omitted 3006 — fount's, and fount is a required service — and
+# exposed 3001, which nothing listens on. Keep this in sync with `--list`.
+#   2525 minnie   2999 continuebee  3000 julia    3002 pref     3003 bdo
+#   3004 joan     3005 addie        3006 fount    3007 dolores  3008 prof
+#   3010 glyphenge (docker-only)    3012 savage   3013 eumachia
+#   3333 wiki (docker-only)         7243 sanora   7277 aretha
+EXPOSE 2525 2999 3000 3002 3003 3004 3005 3006 3007 3008 3010 3012 3013 3333 7243 7277
 
 RUN npm install -g pm2
 RUN npm install -g wiki
 
-WORKDIR /usr/src/app/julia/src/server/node
-RUN npm install
-
-WORKDIR /usr/src/app/continuebee/src/server/node
-RUN npm install
-
-WORKDIR /usr/src/app/joan/src/server/node
-RUN npm install
-
-WORKDIR /usr/src/app/pref/src/server/node
-RUN npm install
-
-WORKDIR /usr/src/app/bdo/src/server/node
-RUN npm install
-
-WORKDIR /usr/src/app/dolores/src/server/node
-RUN npm install
-
-WORKDIR /usr/src/app/fount/src/server/node
-RUN npm install
-
-WORKDIR /usr/src/app/addie/src/server/node
-RUN npm install
-
-WORKDIR /usr/src/app/aretha/src/server/node
-RUN npm install
-
-WORKDIR /usr/src/app/sanora/src/server/node
-RUN npm install
-
-WORKDIR /usr/src/app/minnie/src/server/node
-RUN npm install
+# --dir, not a positional: the positional form appends '/allyabase', which
+# would collide with the allyabase repo checked out just above.
+RUN /usr/src/app/allyabase/deployment/allyabase_setup.sh \
+      --dir=/usr/src/app --install-only \
+      ${ALLYABASE_SERVICES:+--services="$ALLYABASE_SERVICES"}
 
 WORKDIR /usr/src/app
 

@@ -367,4 +367,4 @@ Services can read bootstrap configuration for:
 
 ---
 
-For more information, see the [Planet Nine Documentation](https://github.com/planet-nine-app/allyabase) and [Federated Wiki](https://github.com/fedwiki/wiki).
+For more information, see the [Planet Nine Documentation](https://github.com/freyja-love-and-magic/allyabase) and [Federated Wiki](https://github.com/fedwiki/wiki).

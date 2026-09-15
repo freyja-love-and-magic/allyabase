@@ -179,5 +179,5 @@ To facilitate this, the plugin exposes the following routes to the client:
 
 MIT
 
-[Sessionless]: https://github.com/planet-nine-app/sessionless
+[Sessionless]: https://github.com/freyja-love-and-magic/sessionless
 

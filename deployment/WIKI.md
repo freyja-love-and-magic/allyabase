@@ -195,7 +195,7 @@ Potential future uses for the wiki:
 ## Resources
 
 - [Federated Wiki Documentation](http://fed.wiki.org)
-- [Sessionless Authentication](https://github.com/planet-nine-app/sessionless)
+- [Sessionless Authentication](https://github.com/freyja-love-and-magic/sessionless)
 - [Wiki Security Sessionless Plugin](https://www.npmjs.com/package/wiki-security-sessionless)
 - [Planet Nine Documentation](https://planetnine.app)
 

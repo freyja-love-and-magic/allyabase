@@ -5,18 +5,18 @@ WORKDIR /usr/src/app
 RUN apt-get update && apt-get install -y git netcat-traditional
 
 # Clone all allyabase services
-RUN git clone https://www.github.com/planet-nine-app/addie.git addie
-RUN git clone https://www.github.com/planet-nine-app/aretha.git aretha
-RUN git clone https://www.github.com/planet-nine-app/bdo.git bdo
-RUN git clone https://www.github.com/planet-nine-app/continuebee.git continuebee
-RUN git clone https://www.github.com/planet-nine-app/dolores.git dolores
-RUN git clone https://www.github.com/planet-nine-app/fount.git fount
-RUN git clone https://www.github.com/planet-nine-app/joan.git joan
-RUN git clone https://www.github.com/planet-nine-app/julia.git julia
-RUN git clone https://www.github.com/planet-nine-app/minnie.git minnie
-RUN git clone https://www.github.com/planet-nine-app/pref.git pref
-RUN git clone https://www.github.com/planet-nine-app/sanora.git sanora
-RUN git clone https://www.github.com/planet-nine-app/covenant.git covenant
+RUN git clone https://www.github.com/freyja-love-and-magic/addie.git addie
+RUN git clone https://www.github.com/freyja-love-and-magic/aretha.git aretha
+RUN git clone https://www.github.com/freyja-love-and-magic/bdo.git bdo
+RUN git clone https://www.github.com/freyja-love-and-magic/continuebee.git continuebee
+RUN git clone https://www.github.com/freyja-love-and-magic/dolores.git dolores
+RUN git clone https://www.github.com/freyja-love-and-magic/fount.git fount
+RUN git clone https://www.github.com/freyja-love-and-magic/joan.git joan
+RUN git clone https://www.github.com/freyja-love-and-magic/julia.git julia
+RUN git clone https://www.github.com/freyja-love-and-magic/minnie.git minnie
+RUN git clone https://www.github.com/freyja-love-and-magic/pref.git pref
+RUN git clone https://www.github.com/freyja-love-and-magic/sanora.git sanora
+RUN git clone https://www.github.com/freyja-love-and-magic/covenant.git covenant
 
 # Expose all possible ports for 3 bases
 # Base 1 (40xx + high ports)

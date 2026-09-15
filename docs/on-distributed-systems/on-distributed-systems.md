@@ -239,7 +239,7 @@ Well, that's if you make them churn out laws of course.
 
 
 [encabulator]: https://youtu.be/Ac7G7xOG2Ag?si=MWe3-V6AiyeUg2hq
-[allyabase]: https://github.com/planet-nine-app/allyabase
+[allyabase]: https://github.com/freyja-love-and-magic/allyabase
 
 [^1]: AI is real hot right now. But rather than quibble over definitions of intelligence, let's just say that the LLMs everyone's paying for right now aren't going to skynet us off the map just yet. 
 [^2]: The internet doesn't quite move at the speed of light. Most sources say it moves at a significant fraction of the speed of light, but exactly what that fraction is I'm not sure. It could very well be what's slowing down the internet for you while you're waiting for the bus. 
