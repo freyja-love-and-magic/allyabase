@@ -14,8 +14,22 @@ RUN apt-get update && apt-get install -y git vim
 # are always installed. Clone URLs come from the setup script's manifest, so
 # they don't need repeating here.
 ARG ALLYABASE_SERVICES=""
-RUN git clone https://www.github.com/freyja-love-and-magic/allyabase.git allyabase
+# Pin the branch explicitly. Cloning without -b takes the remote's default
+# branch, which does NOT have the manifest-driven setup script — and the old
+# script has no option parsing at all, so it silently treats "--dir=..." as a
+# positional build dir, fails its mkdir, then clones every service into the
+# current directory instead. Both of the errors that produces are confusing
+# and neither points at the branch.
+#
+# Change this to main once pick-and-choose is merged.
+ARG ALLYABASE_BRANCH=pick-and-choose
+RUN git clone -b "$ALLYABASE_BRANCH" https://www.github.com/freyja-love-and-magic/allyabase.git allyabase
 RUN chmod +x /usr/src/app/allyabase/deployment/allyabase_setup.sh
+
+# Fail loudly and immediately if the cloned script predates the manifest,
+# rather than letting the old script's arg-handling produce a mystery.
+RUN grep -q -- '--dir=\*' /usr/src/app/allyabase/deployment/allyabase_setup.sh \
+    || (echo "ERROR: allyabase branch '$ALLYABASE_BRANCH' has a pre-manifest allyabase_setup.sh" >&2; exit 1)
 
 # Every port in allyabase_setup.sh's manifest, plus the docker-only apps.
 # The old list omitted 3006 — fount's, and fount is a required service — and
