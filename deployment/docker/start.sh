@@ -1,71 +1,37 @@
 #!/bin/bash
+#
+# Container entrypoint (the Dockerfile's CMD) for a single-base allyabase.
+#
+# This used to inline its own ecosystem.config.js — a third hardcoded copy of
+# the service list alongside the Dockerfile's clone list and
+# start-with-ports.sh's config. It listed 11 services with no PORT set at all
+# (relying on each service's built-in default), and adding a service meant
+# editing all three places. savage and eumachia were never added here, so a
+# plain `docker run` started neither.
+#
+# Now the manifest in allyabase_setup.sh is the only place any of that lives.
+#
+# Env:
+#   ALLYABASE_SERVICES=a,b,c   pick services (default: all). bdo, continuebee,
+#                              and fount always come along.
+#   ENABLE_PROF=true           legacy shorthand, kept working: adds prof.
+#
+# For the multi-base test environment — which also needs glyphenge, the proxy,
+# and federated wiki — use start-with-ports.sh instead.
 
-cat > ecosystem.config.js << EOL
-module.exports = {
-  apps: [
-    {
-      name: 'julia',
-      script: '/usr/src/app/julia/src/server/node/julia.js',
-      env: { LOCALHOST: 'true' }
-    },
-    {
-      name: 'continuebee',
-      script: '/usr/src/app/continuebee/src/server/node/continuebee.js',
-      env: { LOCALHOST: 'true' }
-    },
-    {
-      name: 'joan',
-      script: '/usr/src/app/joan/src/server/node/joan.js',
-      env: { LOCALHOST: 'true' }
-    },
-    {
-      name: 'pref',
-      script: '/usr/src/app/pref/src/server/node/pref.js',
-      env: { LOCALHOST: 'true' }
-    },
-    {
-      name: 'bdo',
-      script: '/usr/src/app/bdo/src/server/node/bdo.js',
-      env: { LOCALHOST: 'true' }
-    },
-    {
-      name: 'fount',
-      script: '/usr/src/app/fount/src/server/node/fount.js',
-      env: { LOCALHOST: 'true' }
-    },
-    {
-      name: 'addie',
-      script: '/usr/src/app/addie/src/server/node/addie.js',
-      env: { 
-        LOCALHOST: 'true', 
-        STRIPE_KEY: '<api key here>', 
-        STRIPE_PUBLISHING_KEY: '<publishing key here>',
-        SQUARE_KEY: '<api key here>'
-      }
-    },
-    {
-      name: 'aretha',
-      script: '/usr/src/app/aretha/src/server/node/aretha.js',
-      env: { LOCALHOST: 'true' }
-    },
-    {
-      name: 'sanora',
-      script: '/usr/src/app/sanora/src/server/node/sanora.js',
-      env: { LOCALHOST: 'true' }
-    },
-    {
-      name: 'dolores',
-      script: '/usr/src/app/dolores/src/server/node/dolores.js',
-      env: { LOCALHOST: 'true' }
-    },
-    {
-      name: 'minnie',
-      script: '/usr/src/app/minnie/src/server/node/minnie.js',
-      env: { LOCALHOST: 'true' }
-    }
-  ]
-}
-EOL
+set -e
 
-pm2-runtime start ecosystem.config.js
+SETUP=/usr/src/app/allyabase/deployment/allyabase_setup.sh
 
+SETUP_ARGS=(--dir=/usr/src/app --start-only)
+
+if [ -n "$ALLYABASE_SERVICES" ]; then
+    SETUP_ARGS+=("--services=$ALLYABASE_SERVICES")
+elif [ "$ENABLE_PROF" = "true" ]; then
+    SETUP_ARGS+=(--all)
+else
+    # prof has always been opt-in in this environment.
+    SETUP_ARGS+=(--all --without=prof)
+fi
+
+exec "$SETUP" "${SETUP_ARGS[@]}"

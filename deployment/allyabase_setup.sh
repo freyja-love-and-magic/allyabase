@@ -345,7 +345,12 @@ setup_ecosystem() {
         npm init -y
     fi
 
-    npm install pm2-runtime
+    # The docker image already installs pm2 globally, which provides the
+    # pm2-runtime binary — installing a second local copy there is pure waste.
+    # On a bare droplet there's usually nothing, so fall back to a local install.
+    if ! command -v pm2-runtime >/dev/null 2>&1; then
+        npm install pm2-runtime
+    fi
 
     # Truncate rather than append: re-running setup previously concatenated a
     # second module.exports onto the existing file, producing a config whose
@@ -417,7 +422,11 @@ main() {
 
     echo
     echo "Starting ${#SELECTED[@]} services under pm2..."
-    ./node_modules/.bin/pm2-runtime start "$ecosystem_config"
+    if command -v pm2-runtime >/dev/null 2>&1; then
+        exec pm2-runtime start "$ecosystem_config"
+    else
+        exec ./node_modules/.bin/pm2-runtime start "$ecosystem_config"
+    fi
 }
 
 main

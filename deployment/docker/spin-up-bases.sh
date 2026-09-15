@@ -293,8 +293,8 @@ if [ "$ENABLE_PROF" = true ]; then
   PROF_PORTS="-p 5123:3008"
 fi
 
-# Start Base 1 (Host ports 5111-5126 → Standard Docker internal ports)
-echo "🏗️  Starting Base 1 (Host ports 5111-5126)..."
+# Start Base 1 (Host ports 5111-5128 → Standard Docker internal ports)
+echo "🏗️  Starting Base 1 (Host ports 5111-5128)..."
 if [ "$ENABLE_PROF" = true ]; then
   echo "   Prof enabled on port 5123"
 fi
@@ -318,6 +318,8 @@ docker run -d \
   -p 5120:7277 \
   -p 5121:7243 \
   -p 5122:3011 \
+  -p 5127:3012 \
+  -p 5128:3013 \
   -p 5124:3333 \
   -p 5125:3010 \
   -p 5126:5124 \
@@ -325,7 +327,7 @@ docker run -d \
   allyabase-flexible
 
 # Wait for Base 1 services (check host ports)
-BASE1_PORTS=(5111 5112 5113 5114 5115 5116 5117 5118 5119 5120 5121 5122 5124 5125 5126)
+BASE1_PORTS=(5111 5112 5113 5114 5115 5116 5117 5118 5119 5120 5121 5122 5127 5128 5124 5125 5126)
 if [ "$ENABLE_PROF" = true ]; then
   BASE1_PORTS+=(5123)
 fi
@@ -343,8 +345,8 @@ if [ "$ENABLE_PROF" = true ]; then
   PROF_PORTS_BASE2="-p 5223:3008"
 fi
 
-# Start Base 2 (Host ports 5211-5226 → Standard Docker internal ports)
-echo "🏗️  Starting Base 2 (Host ports 5211-5226)..."
+# Start Base 2 (Host ports 5211-5228 → Standard Docker internal ports)
+echo "🏗️  Starting Base 2 (Host ports 5211-5228)..."
 if [ "$ENABLE_PROF" = true ]; then
   echo "   Prof enabled on port 5223"
 fi
@@ -368,6 +370,8 @@ docker run -d \
   -p 5220:7277 \
   -p 5221:7243 \
   -p 5222:3011 \
+  -p 5227:3012 \
+  -p 5228:3013 \
   -p 5224:3333 \
   -p 5225:3010 \
   -p 5226:5124 \
@@ -375,7 +379,7 @@ docker run -d \
   allyabase-flexible
 
 # Wait for Base 2 services (check host ports)
-BASE2_PORTS=(5211 5212 5213 5214 5215 5216 5217 5218 5219 5220 5221 5222 5224 5225 5226)
+BASE2_PORTS=(5211 5212 5213 5214 5215 5216 5217 5218 5219 5220 5221 5222 5227 5228 5224 5225 5226)
 if [ "$ENABLE_PROF" = true ]; then
   BASE2_PORTS+=(5223)
 fi
@@ -393,8 +397,8 @@ if [ "$ENABLE_PROF" = true ]; then
   PROF_PORTS_BASE3="-p 5323:3008"
 fi
 
-# Start Base 3 (Host ports 5311-5326 → Standard Docker internal ports)
-echo "🏗️  Starting Base 3 (Host ports 5311-5326)..."
+# Start Base 3 (Host ports 5311-5328 → Standard Docker internal ports)
+echo "🏗️  Starting Base 3 (Host ports 5311-5328)..."
 if [ "$ENABLE_PROF" = true ]; then
   echo "   Prof enabled on port 5323"
 fi
@@ -418,6 +422,8 @@ docker run -d \
   -p 5320:7277 \
   -p 5321:7243 \
   -p 5322:3011 \
+  -p 5327:3012 \
+  -p 5328:3013 \
   -p 5324:3333 \
   -p 5325:3010 \
   -p 5326:5124 \
@@ -425,7 +431,7 @@ docker run -d \
   allyabase-flexible
 
 # Wait for Base 3 services (check host ports)
-BASE3_PORTS=(5311 5312 5313 5314 5315 5316 5317 5318 5319 5320 5321 5322 5324 5325 5326)
+BASE3_PORTS=(5311 5312 5313 5314 5315 5316 5317 5318 5319 5320 5321 5322 5327 5328 5324 5325 5326)
 if [ "$ENABLE_PROF" = true ]; then
   BASE3_PORTS+=(5323)
 fi
@@ -494,6 +500,8 @@ echo "  dolores: http://localhost:5118 → docker:3007"
 echo "  minnie: http://localhost:5119 → docker:2525"
 echo "  aretha: http://localhost:5120 → docker:7277"
 echo "  sanora: http://localhost:5121 → docker:7243"
+echo "  savage: http://localhost:5127 → docker:3012"
+echo "  eumachia: http://localhost:5128 → docker:3013"
 if [ "$ENABLE_PROF" = true ]; then
   echo "  prof: http://localhost:5123 → docker:3008"
 fi
@@ -513,6 +521,8 @@ echo "  dolores: http://localhost:5218 → docker:3007"
 echo "  minnie: http://localhost:5219 → docker:2525"
 echo "  aretha: http://localhost:5220 → docker:7277"
 echo "  sanora: http://localhost:5221 → docker:7243"
+echo "  savage: http://localhost:5227 → docker:3012"
+echo "  eumachia: http://localhost:5228 → docker:3013"
 if [ "$ENABLE_PROF" = true ]; then
   echo "  prof: http://localhost:5223 → docker:3008"
 fi
@@ -532,6 +542,8 @@ echo "  dolores: http://localhost:5318 → docker:3007"
 echo "  minnie: http://localhost:5319 → docker:2525"
 echo "  aretha: http://localhost:5320 → docker:7277"
 echo "  sanora: http://localhost:5321 → docker:7243"
+echo "  savage: http://localhost:5327 → docker:3012"
+echo "  eumachia: http://localhost:5328 → docker:3013"
 if [ "$ENABLE_PROF" = true ]; then
   echo "  prof: http://localhost:5323 → docker:3008"
 fi
