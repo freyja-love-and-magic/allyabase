@@ -12,21 +12,28 @@ process.env.LOCALHOST = process.env.LOCALHOST || 'true';
 process.env.PERSISTENCE_BACKEND = process.env.PERSISTENCE_BACKEND || 'netlify-blobs';
 
 import bdoApp from '../bdo/src/server/node/bdo.js';
-import sanoraApp from '../sanora/src/server/node/sanora.js';
 import addieApp from '../addie/src/server/node/addie.js';
 import fountApp from '../fount/src/server/node/fount.js';
-import prefApp from '../pref/src/server/node/pref.js';
-import joanApp from '../joan/src/server/node/joan.js';
-import continuebeeApp from '../continuebee/src/server/node/continuebee.js';
-import arethaApp from '../aretha/src/server/node/aretha.js';
-import juliaApp from '../julia/src/server/node/julia.js';
-import doloresApp from '../dolores/src/server/node/dolores.js';
-// minnie deliberately omitted — it's an SMTP server (long-lived TCP
-// daemon on port 2525), not an HTTP Express app, so it can't run
-// inside a Lambda function. If it ever gains an HTTP surface, add
-// it back here.
-import savageApp from '../savage/src/server/node/savage.js';
 import eumachiaApp from '../eumachia/src/server/node/eumachia.js';
+// TEMPORARY: bundle limited to a slice that fits under Lambda's 250MB
+// unzipped code cap. The full 12-service bundle blows the limit on
+// netlify-packaging branches (dolores alone pulls in ~100MB of
+// @opentelemetry / @atproto / rxjs / etc.).
+//
+// Current slice covers getpayed end-to-end:
+//   - addie   → Stripe Express onboarding (also used by bizbuz)
+//   - fount   → identity (transitively required by addie)
+//   - bdo     → invoice publish + canonical profile storage
+//   - eumachia → the actual pay page + PaymentIntent/status routes
+//                (savage strips JS so it can't host Stripe Elements,
+//                which is why eumachia owns the interactive checkout).
+//
+// Restore the other imports once we split into per-service functions
+// or aggressively prune upstream — see the prune list in
+// scripts/prepare-services.sh for what we've already cut.
+//
+// Currently omitted: sanora, pref, joan, continuebee, aretha, julia,
+// dolores, savage, minnie.
 
 // Ports match each service's own standalone app.listen() default exactly -
 // see each service's <name>.js. Several services bootstrap themselves against
@@ -38,17 +45,9 @@ import eumachiaApp from '../eumachia/src/server/node/eumachia.js';
 // droplet deployment, just now resolving against a local peer instead of a
 // network call.
 const SERVICES = {
-  pref: { app: prefApp, port: 3002 },
-  joan: { app: joanApp, port: 3004 },
   bdo: { app: bdoApp, port: 3003 },
   fount: { app: fountApp, port: 3006 },
   addie: { app: addieApp, port: 3005 },
-  continuebee: { app: continuebeeApp, port: 2999 },
-  aretha: { app: arethaApp, port: 7277 },
-  julia: { app: juliaApp, port: 3000 },
-  dolores: { app: doloresApp, port: 3007 },
-  sanora: { app: sanoraApp, port: 7243 },
-  savage: { app: savageApp, port: 3009 },
   eumachia: { app: eumachiaApp, port: 3011 },
 };
 

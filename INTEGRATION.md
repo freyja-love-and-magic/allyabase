@@ -168,7 +168,7 @@ This works, but not out of the box — Netlify's `esbuild`-based function bundle
 
 ### Adding a lightweight service to the bundle
 
-Not everything you add to a bundled deployment needs to be a full allyabase service with its own identity and persistence — sometimes it's just a small transform or pass-through in front of an existing one. `savage` (`deployment/savage/`) is a working example: `GET /savage/user/:uuid/bdo` forwards straight through to BDO's own `GET /user/:uuid/bdo` (whatever query string it's given — auth is BDO's problem, not savage's), and wraps an `svg` property from the response in a minimal HTML page with the SVG set as `og:image`/`twitter:image`, for shareable rich link previews.
+Not everything you add to a bundled deployment needs to be a full allyabase service with its own identity and persistence — sometimes it's just a small transform or pass-through in front of an existing one. `savage` (its own repo now, previously `deployment/savage/`) is a working example: `GET /savage/user/:uuid/bdo` forwards straight through to BDO's own `GET /user/:uuid/bdo` (whatever query string it's given — auth is BDO's problem, not savage's), and wraps an `svg` property from the response in a minimal HTML page with the SVG set as `og:image`/`twitter:image`, for shareable rich link previews.
 
 Having no persistence layer sidesteps most of the gotchas above, but wiring it into the bundle surfaced a different, narrower set of problems worth knowing about if you add something similar:
 
@@ -211,7 +211,7 @@ Deeper per-service `magic-spells.js` test suites also exist in `sharon/tests/*/m
 
 `homeventory/website.js` (in `planet-nine/third-party/homeventory`) is a working, minimal example of a client app integrating with BDO: registering an identity, persisting keys, and syncing data — including the Netlify-specific fixes described above already applied. It's a good starting point to copy from.
 
-`deployment/savage/src/server/node/savage.js` is a different kind of reference: a persistence-free service bundled *alongside* allyabase's own services rather than a client consuming them from outside — good starting point for "small transform in front of an existing service" rather than "full client with its own identity." Its `scripts/smoke-test.mjs` and `scripts/test-sanitize.mjs` are also worth a look as examples of testing a bundled service end-to-end, including an adversarial test (a malicious SVG payload) that proves sanitization actually works rather than just asserting a 200 status.
+savage's `src/server/node/savage.js` (extracted to its own repo; was `deployment/savage/`) is a different kind of reference: a persistence-free service bundled *alongside* allyabase's own services rather than a client consuming them from outside — good starting point for "small transform in front of an existing service" rather than "full client with its own identity." Its `scripts/smoke-test.mjs` and `scripts/test-sanitize.mjs` are also worth a look as examples of testing a bundled service end-to-end, including an adversarial test (a malicious SVG payload) that proves sanitization actually works rather than just asserting a 200 status.
 
 ## Known Issues Worth Knowing About
 

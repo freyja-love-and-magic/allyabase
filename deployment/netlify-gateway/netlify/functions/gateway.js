@@ -34,6 +34,20 @@ async function getHandler() {
 }
 
 exports.handler = async (event, context) => {
-  const h = await getHandler();
-  return h(event, context);
+  const started = Date.now();
+  const path = event.rawUrl || event.path || '(no path)';
+  const method = event.httpMethod || '(no method)';
+  try {
+    const h = await getHandler();
+    const res = await h(event, context);
+    console.log(`[gw] ${method} ${path} -> ${res && res.statusCode} in ${Date.now() - started}ms`);
+    return res;
+  } catch (err) {
+    console.error(`[gw] ${method} ${path} threw after ${Date.now() - started}ms:`, err && err.stack || err);
+    return {
+      statusCode: 500,
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ error: 'gateway_error', message: String(err && err.message || err) }),
+    };
+  }
 };

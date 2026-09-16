@@ -21,22 +21,15 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GATEWAY_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 DEPLOYMENT_DIR="$(cd "$GATEWAY_DIR/.." && pwd)"
 
-# Keep in sync with the imports at the top of ../services.js.
+# Keep in sync with the imports at the top of ../services.mjs.
+# Currently trimmed to what fits under the 250MB Lambda limit —
+# see services.mjs for the reasoning and full un-omitted list.
 SERVICES=(
   bdo
-  sanora
   addie
   fount
-  pref
-  joan
-  continuebee
-  aretha
-  julia
-  dolores
-  savage
   eumachia
 )
-# minnie deliberately omitted — SMTP daemon, doesn't fit a Lambda.
 
 echo "==> Installing sibling service deps for bundling"
 echo "    (gateway: $GATEWAY_DIR)"
@@ -57,14 +50,48 @@ for svc in "${SERVICES[@]}"; do
     exit 1
   fi
   # --no-audit / --no-fund: don't emit chatter that hides real errors.
-  # --loglevel=error: same reason.
-  # --omit=dev is deliberately NOT set — some services list runtime deps
-  # in devDependencies (safer to install everything for the bundle).
+  # --omit=dev: sibling services list some huge dev-only tooling
+  # (typescript, etc.) as regular deps — leaving devDeps in blows the
+  # Lambda 250MB unzipped code limit. Runtime code should be in
+  # `dependencies`, so this is defensible; if a service misclassified
+  # a runtime dep as dev, add it to that service's `dependencies`
+  # upstream rather than dropping this flag.
   echo "==> [$svc] npm install"
-  (cd "$dir" && npm install --no-audit --no-fund --loglevel=error)
+  (cd "$dir" && rm -rf node_modules && npm install --no-audit --no-fund --loglevel=error --omit=dev)
 done
 
 echo "==> All sibling service deps installed."
+
+# Prune build-time-only packages that some services list as runtime deps.
+# These get resolved by zisi's dep-walk and dragged into the bundle even
+# though nothing in the actual code path imports them at request time.
+# Confirmed by grep across every service's src/server/node/ tree.
+#
+# Combined savings on current netlify-packaging branches:
+#   typescript (39MB in addie) + @types/* + ts-custom-error's
+#   codeclimate-reporter binary (13MB in dolores) ~= 60MB
+#
+# If a real runtime failure ever points at one of these, remove it from
+# this list and address the underlying missing dep upstream.
+PRUNE_PATTERNS=(
+  "typescript"
+  "@types"
+  "ts-custom-error/codeclimate-reporter"
+)
+echo "==> Pruning build-time-only packages from sibling node_modules"
+pruned=0
+for svc in "${SERVICES[@]}"; do
+  nm="$DEPLOYMENT_DIR/$svc/src/server/node/node_modules"
+  [ -d "$nm" ] || continue
+  for pat in "${PRUNE_PATTERNS[@]}"; do
+    target="$nm/$pat"
+    if [ -e "$target" ]; then
+      rm -rf "$target"
+      pruned=$((pruned + 1))
+    fi
+  done
+done
+echo "    Pruned $pruned path(s)."
 
 # Patch every ecosystem client package (bdo-js, addie-js, fount-js) that
 # still `import fetch from 'node-fetch'` — that dependency is undeclared
@@ -150,6 +177,119 @@ if [ -f "$DOLORES_CANIMUS" ] && ! grep -q "gateway-patched-tmp-feeds" "$DOLORES_
   rm -f "${DOLORES_CANIMUS}.bak"
   echo "==> Patched dolores/canimus.js — feeds dir → /tmp/feeds"
 fi
+# joan/netlify-packaging imports `./src/auth/oauth.js` but that file
+# isn't in the branch (appears to be an incomplete commit upstream —
+# should be reported to the joan repo). Stub it out with matching named
+# exports so the bundle can resolve; the OAuth code paths that call it
+# will 500 at request time, but the module load succeeds, which is
+# what unblocks the rest of the gateway.
+JOAN_OAUTH_DIR="$DEPLOYMENT_DIR/joan/src/server/node/src/auth"
+if [ ! -f "$JOAN_OAUTH_DIR/oauth.js" ]; then
+  mkdir -p "$JOAN_OAUTH_DIR"
+  cat > "$JOAN_OAUTH_DIR/oauth.js" <<'STUB'
+// gateway-patched: stub for missing joan/netlify-packaging oauth module.
+// Real implementation is missing from the branch; report to joan repo.
+const notImplemented = () => {
+  throw new Error('OAuth not implemented in this deployment');
+};
+export const initiateGitHubOAuth = notImplemented;
+export const exchangeGitHubCode = notImplemented;
+export const getGitHubUser = notImplemented;
+STUB
+  echo "==> Stubbed joan/src/auth/oauth.js (missing from netlify-packaging)"
+fi
+if [ ! -f "$JOAN_OAUTH_DIR/otp.js" ]; then
+  mkdir -p "$JOAN_OAUTH_DIR"
+  cat > "$JOAN_OAUTH_DIR/otp.js" <<'STUB'
+// gateway-patched: stub for missing joan/netlify-packaging otp module.
+const notImplemented = () => {
+  throw new Error('OTP not implemented in this deployment');
+};
+export const sendOTP = notImplemented;
+export const verifyOTP = notImplemented;
+STUB
+  echo "==> Stubbed joan/src/auth/otp.js (missing from netlify-packaging)"
+fi
+
+# addie and bdo on netlify-packaging still ship the filesystem-backed
+# client.js (writes to ./data/{svc}/...). Under Lambda every invocation
+# gets a fresh /var/task, so `create_user` writes a file the next
+# request can't find — surfaces as addie's `getUser` throwing 'not
+# found' and returning 404 from /processor/stripe/express even for
+# UUIDs the app just got back from create_user.
+#
+# Sanout, fount, and eumachia already ship a client.netlify-blobs.js
+# alongside client.js and a db.js that picks between them via
+# PERSISTENCE_BACKEND. Until addie/bdo catch up upstream, overwrite
+# their client.js in-place with a blob-backed drop-in (same
+# get/set/del surface db.js relies on, per-service store name).
+# Original is preserved as client.js.orig so an unpatched checkout
+# can still be diff'd.
+# @netlify/blobs isn't in addie/bdo's package.json (they don't ship the
+# adapter upstream yet), so install it here for the patched client.js
+# below to resolve. --no-save keeps the sibling repos clean.
+for svc in bdo addie; do
+  nm="$DEPLOYMENT_DIR/$svc/src/server/node/node_modules"
+  if [ -d "$nm" ] && [ ! -d "$nm/@netlify/blobs" ]; then
+    echo "==> [$svc] installing @netlify/blobs for blob-adapter patch"
+    (cd "$DEPLOYMENT_DIR/$svc/src/server/node" && npm install --no-save --no-audit --no-fund --loglevel=error @netlify/blobs)
+  fi
+done
+
+patch_blob_client() {
+  local svc="$1"
+  local dir="$DEPLOYMENT_DIR/$svc/src/server/node/src/persistence"
+  [ -f "$dir/client.js" ] || return 0
+  if grep -q "gateway-patched-blob-client" "$dir/client.js" 2>/dev/null; then
+    return 0
+  fi
+  cp "$dir/client.js" "$dir/client.js.orig"
+  cat > "$dir/client.js" <<PATCH
+// gateway-patched-blob-client: replaces the fs-backed default with a
+// @netlify/blobs adapter so state survives across Lambda invocations.
+// Original file preserved as client.js.orig.
+import { getStore } from '@netlify/blobs';
+
+const storeName = '$svc';
+
+const getBlobStore = () => {
+  if (process.env.NETLIFY_BLOBS_CONTEXT) {
+    return getStore(storeName);
+  }
+  const edgeURL = process.env.BLOBS_LOCAL_URL;
+  const token = process.env.BLOBS_LOCAL_TOKEN;
+  if (!edgeURL || !token) {
+    throw new Error(
+      'No Netlify Blobs context found and BLOBS_LOCAL_URL/BLOBS_LOCAL_TOKEN are not set.'
+    );
+  }
+  return getStore({ name: storeName, edgeURL, token, siteID: 'local-dev-site' });
+};
+
+const set = async (key, value) => {
+  await getBlobStore().set(key, value);
+  return true;
+};
+
+const get = async (key) => {
+  return await getBlobStore().get(key);
+};
+
+const del = async (key) => {
+  await getBlobStore().delete(key);
+  return true;
+};
+
+const createClient = () => ({ on: () => createClient });
+createClient.connect = () => ({ set, get, del });
+
+export { createClient };
+PATCH
+  echo "==> Patched $svc/src/persistence/client.js — now blob-backed"
+}
+patch_blob_client bdo
+patch_blob_client addie
+
 DOLORES_MAIN="$DEPLOYMENT_DIR/dolores/src/server/node/dolores.js"
 if [ -f "$DOLORES_MAIN" ] && ! grep -q "gateway-patched-catch" "$DOLORES_MAIN"; then
   sed -i.bak "s|canimus.refreshFeeds().then(\(.*\))|canimus.refreshFeeds().then(\1).catch(err => console.warn('canimus init failed:', err)) /* gateway-patched-catch */|" "$DOLORES_MAIN"

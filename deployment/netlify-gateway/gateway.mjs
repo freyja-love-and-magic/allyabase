@@ -51,8 +51,19 @@ for (const [name, { port }] of Object.entries(SERVICES)) {
     // always fully evaluated before any plain statement in this file runs,
     // so a load-time env var set here would be too late for services that
     // read it at their own module top level.
-    onProxyReq: (proxyReq) => {
+    onProxyReq: (proxyReq, req) => {
       proxyReq.setHeader('x-forwarded-prefix', `/${name}`);
+      console.log(`[proxy->${name}] ${req.method} ${req.originalUrl} -> :${port}${proxyReq.path}`);
+    },
+    onProxyRes: (proxyRes, req) => {
+      console.log(`[proxy<-${name}] ${req.method} ${req.originalUrl} <- ${proxyRes.statusCode}`);
+    },
+    onError: (err, req, res) => {
+      console.error(`[proxy!${name}] ${req.method} ${req.originalUrl} error:`, err && err.stack || err);
+      if (res && !res.headersSent) {
+        res.writeHead(502, { 'content-type': 'application/json' });
+        res.end(JSON.stringify({ error: 'upstream_unreachable', service: name, message: String(err && err.message || err) }));
+      }
     },
   }));
 }

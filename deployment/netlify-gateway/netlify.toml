@@ -30,30 +30,14 @@
   # (`"type": "module"`). Without them, Node treats the bundled files as
   # CJS and every `import` statement throws "Cannot use import statement
   # outside a module" at runtime. Paths are relative to this netlify.toml.
+  # Trimmed to match the reduced service list in services.mjs (see
+  # its top-of-file comment for why the full 12-service bundle blows
+  # the Lambda 250MB code limit on netlify-packaging branches).
   included_files = [
     "../bdo/src/server/node/package.json",
     "../addie/src/server/node/package.json",
     "../fount/src/server/node/package.json",
-    "../sanora/src/server/node/package.json",
-    "../pref/src/server/node/package.json",
-    "../joan/src/server/node/package.json",
-    "../continuebee/src/server/node/package.json",
-    "../aretha/src/server/node/package.json",
-    "../julia/src/server/node/package.json",
-    "../dolores/src/server/node/package.json",
-    "../savage/src/server/node/package.json",
-    "../eumachia/src/server/node/package.json",
-    # Non-JS assets that services read from disk at runtime (zisi bundles
-    # .js via import traversal but does NOT auto-include arbitrary
-    # readFileSync targets — see /var/task/... paths in Netlify Function
-    # logs for what services actually reach for). Explicit list, NOT a
-    # **/** glob: dolores/public has 80+MB of audio content that would
-    # blow through Lambda's 250MB unzipped-code limit.
-    "../sanora/src/server/node/templates/*.html",
-    "../sanora/public/form-demo.html",
-    "../sanora/public/form-widget-docs.html",
-    "../dolores/public/audio-player.html",
-    "../dolores/public/post-widget-docs.html"
+    "../eumachia/src/server/node/package.json"
   ]
 
 # All 11 bundled services are dispatched by path prefix inside gateway.js's
