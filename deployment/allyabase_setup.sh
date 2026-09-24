@@ -299,8 +299,20 @@ setup_services() {
     for service in "${SELECTED[@]}"; do
         org="${default_org:-$(service_org "$service")}"
 
+        # An existing clone is UPDATED, not skipped. Skipping made re-running
+        # setup a no-op for service code, so a redeploy silently kept serving
+        # whatever was cloned the first time — a fixed bdo could be pushed,
+        # the droplet redeployed, and the old build kept running with nothing
+        # in the output to say so.
+        #
+        # --ff-only rather than a merge: if someone has edited a service in
+        # place on the box, stop and say so instead of quietly reconciling it.
         if [[ -d "$service/.git" ]]; then
-            printf '%s\n' "'$service' already cloned, skipping."
+            printf '%s\n' "Updating '$service'..."
+            if ! git -C "$service" pull --ff-only; then
+                echo "  '$service' has local changes or diverged; leaving it alone." >&2
+                echo "  Resolve by hand, or delete $buildDir/$service and re-run." >&2
+            fi
         else
             git clone "https://github.com/$org/$service"
         fi
@@ -319,6 +331,24 @@ service_env_extras() {
 			        STRIPE_KEY: process.env.STRIPE_KEY || '<api key here>',
 			        STRIPE_PUBLISHING_KEY: process.env.STRIPE_PUBLISHING_KEY || '<publishing key here>',
 			        SQUARE_KEY: process.env.SQUARE_KEY || '<api key here>',
+			EOF
+            ;;
+        prof)
+            # prof holds PII and encrypts it at rest, so it needs a key and
+            # REFUSES TO START without one — it exits rather than accept
+            # profiles it cannot store. Set PROF_ENCRYPTION_KEY in the
+            # environment before selecting prof:
+            #
+            #     openssl rand -hex 32
+            #
+            # Keep that key somewhere it outlives the droplet. Losing it
+            # means losing every profile stored under it. PROF_DECRYPTION_KEYS
+            # ("kA:<hex>,kB:<hex>") keeps superseded keys readable so a
+            # rotation doesn't have to rewrite every profile at once.
+            cat <<-EOF
+			        PROF_ENCRYPTION_KEY: process.env.PROF_ENCRYPTION_KEY || '',
+			        PROF_ENCRYPTION_KEY_ID: process.env.PROF_ENCRYPTION_KEY_ID || 'k1',
+			        PROF_DECRYPTION_KEYS: process.env.PROF_DECRYPTION_KEYS || '',
 			EOF
             ;;
         savage)

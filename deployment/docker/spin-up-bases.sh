@@ -277,7 +277,36 @@ if [ -f "$ENV_FILE" ]; then
     ADDIE_ENV_VARS="$ADDIE_ENV_VARS -e SQUARE_KEY=$SQUARE_KEY"
     echo "   ✅ Square API key configured"
   fi
+
+  # prof encrypts profiles at rest and exits on startup without a key, so
+  # forward it whenever one is set. Everything below goes to the container as
+  # a whole, which is why it rides ADDIE_ENV_VARS despite the name.
+  if [ -n "$PROF_ENCRYPTION_KEY" ]; then
+    ADDIE_ENV_VARS="$ADDIE_ENV_VARS -e PROF_ENCRYPTION_KEY=$PROF_ENCRYPTION_KEY"
+    echo "   ✅ Profile encryption key configured"
+  fi
+
+  if [ -n "$PROF_ENCRYPTION_KEY_ID" ]; then
+    ADDIE_ENV_VARS="$ADDIE_ENV_VARS -e PROF_ENCRYPTION_KEY_ID=$PROF_ENCRYPTION_KEY_ID"
+  fi
+
+  if [ -n "$PROF_DECRYPTION_KEYS" ]; then
+    ADDIE_ENV_VARS="$ADDIE_ENV_VARS -e PROF_DECRYPTION_KEYS=$PROF_DECRYPTION_KEYS"
+    echo "   ✅ Superseded profile keys retained for reads"
+  fi
   echo ""
+fi
+
+# Refuse here rather than letting prof exit on boot and have the container
+# restart it forever. prof will not run without a key, by design.
+if [ "$ENABLE_PROF" = true ] && [ -z "$PROF_ENCRYPTION_KEY" ]; then
+  echo "❌ --enable-prof needs PROF_ENCRYPTION_KEY, which prof uses to encrypt profiles at rest."
+  echo "   Generate one and put it in .env:"
+  echo ""
+  echo "     echo \"PROF_ENCRYPTION_KEY=\$(openssl rand -hex 32)\" >> .env"
+  echo ""
+  echo "   Keep a copy somewhere durable. Losing it loses every stored profile."
+  exit 1
 fi
 
 if [ -z "$ADDIE_ENV_VARS" ]; then
