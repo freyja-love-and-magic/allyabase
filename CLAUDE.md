@@ -125,9 +125,12 @@ wrote. The fields and their owners today:
 | Field | Owned by | Everyone else |
 |---|---|---|
 | `photo`, `fields` | all four (each has an editor) | — |
-| `address` | Gettit | carry forward |
+| `address` | Gettit* | carry forward |
 | `idothisCategories`, `serviceZip`, `idothisRateCents` | idothis | carry forward |
 | `stripeConnected`, `payout` | getpayed | carry forward |
+
+\*Gettit and Letemcook are named in these docs as family members but are
+**not checked out at `~/Work`**, so nothing here was verified against them. Treat their ownership of `address` as inherited documentation, and assume the four apps in this workspace are the ones that actually have to agree.
 
 Adding a field means adding it to four Rust structs, or the next app to save
 deletes it. The struct is deliberately copy-pasted rather than shared as a
