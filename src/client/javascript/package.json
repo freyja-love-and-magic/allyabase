@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/planet-nine-app/allyabase.git"
+    "url": "git+https://github.com/freyja-love-and-magic/allyabase.git"
   },
   "exports": {
     "import": "./allyabase.js",
@@ -19,9 +19,9 @@
   "type": "module",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/planet-nine-app/allyabase/issues"
+    "url": "https://github.com/freyja-love-and-magic/allyabase/issues"
   },
-  "homepage": "https://github.com/planet-nine-app/allyabase#readme",
+  "homepage": "https://github.com/freyja-love-and-magic/allyabase#readme",
   "dependencies": {
     "addie-js": "latest",
     "bdo-js": "latest",

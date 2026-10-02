@@ -132,3 +132,6 @@ out
 .pnp.*
 
 data
+
+# Local Netlify folder
+.netlify

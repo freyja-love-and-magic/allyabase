@@ -8,13 +8,13 @@
     "sessionless",
     "planet-nine"
   ],
-  "homepage": "https://github.com/planet-nine-app/wiki-plugin-contract#readme",
+  "homepage": "https://github.com/freyja-love-and-magic/wiki-plugin-contract#readme",
   "bugs": {
-    "url": "https://github.com/planet-nine-app/wiki-plugin-contract/issues"
+    "url": "https://github.com/freyja-love-and-magic/wiki-plugin-contract/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/planet-nine-app/wiki-plugin-contract.git"
+    "url": "git+https://github.com/freyja-love-and-magic/wiki-plugin-contract.git"
   },
   "license": "MIT",
   "author": "planetnineisaspaceship",

@@ -4,24 +4,24 @@ WORKDIR /usr/src/app
 
 RUN apt-get update && apt-get install -y git
 
-RUN git clone https://www.github.com/planet-nine-app/addie.git addie
-RUN git clone https://www.github.com/planet-nine-app/aretha.git aretha
-RUN git clone https://www.github.com/planet-nine-app/bdo.git bdo
-RUN git clone https://www.github.com/planet-nine-app/continuebee.git continuebee
-RUN git clone https://www.github.com/planet-nine-app/dolores.git dolores
-RUN git clone https://www.github.com/planet-nine-app/fount.git fount
-RUN git clone https://www.github.com/planet-nine-app/joan.git joan
-RUN git clone https://www.github.com/planet-nine-app/julia.git julia
-RUN git clone https://www.github.com/planet-nine-app/minnie.git minnie
-RUN git clone https://www.github.com/planet-nine-app/pref.git pref
-RUN git clone https://www.github.com/planet-nine-app/sanora.git sanora
-RUN git clone https://www.github.com/planet-nine-app/covenant.git covenant
+RUN git clone https://www.github.com/freyja-love-and-magic/addie.git addie
+RUN git clone https://www.github.com/freyja-love-and-magic/aretha.git aretha
+RUN git clone https://www.github.com/freyja-love-and-magic/bdo.git bdo
+RUN git clone https://www.github.com/freyja-love-and-magic/continuebee.git continuebee
+RUN git clone https://www.github.com/freyja-love-and-magic/dolores.git dolores
+RUN git clone https://www.github.com/freyja-love-and-magic/fount.git fount
+RUN git clone https://www.github.com/freyja-love-and-magic/joan.git joan
+RUN git clone https://www.github.com/freyja-love-and-magic/julia.git julia
+RUN git clone https://www.github.com/freyja-love-and-magic/minnie.git minnie
+RUN git clone https://www.github.com/freyja-love-and-magic/pref.git pref
+RUN git clone https://www.github.com/freyja-love-and-magic/sanora.git sanora
+RUN git clone https://www.github.com/freyja-love-and-magic/covenant.git covenant
 
 # Clone prof (optional service) - clone from GitHub if available, skip if not
-RUN git clone https://www.github.com/planet-nine-app/prof.git prof || echo "Prof service not available, skipping..."
+RUN git clone https://www.github.com/freyja-love-and-magic/prof.git prof || echo "Prof service not available, skipping..."
 
 # Clone the-advancement for Glyphenge
-RUN git clone https://www.github.com/planet-nine-app/the-advancement.git the-advancement
+RUN git clone https://www.github.com/freyja-love-and-magic/the-advancement.git the-advancement
 
 # Expose all possible ports for 3 bases (40xx, 50xx, 60xx ranges)
 # Base 1 (40xx)
@@ -41,7 +41,7 @@ RUN npm install -g wiki
 RUN npm install -g wiki-security-sessionless
 
 # Clone allyabase for startup scripts and wiki plugin
-RUN git clone https://www.github.com/planet-nine-app/allyabase.git allyabase
+RUN git clone https://www.github.com/freyja-love-and-magic/allyabase.git allyabase
 
 # Install wiki-plugin-allyabase dependencies from local clone
 WORKDIR /usr/src/app/allyabase/src/wiki/wiki-plugin-allyabase

@@ -1,0 +1,21 @@
+{
+  "name": "allyabase-netlify-gateway",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Single-process Netlify Function that bundles the allyabase miniservices behind an internal reverse proxy",
+  "scripts": {
+    "start": "node gateway.js"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^9.0.0",
+    "express": "^4.19.2",
+    "http-proxy-middleware": "^2.0.6",
+    "jsdom": "^26.1.0",
+    "serverless-http": "^3.2.0",
+    "tmp-promise": "^3.0.3"
+  },
+  "devDependencies": {
+    "netlify-cli": "^27.1.1"
+  }
+}

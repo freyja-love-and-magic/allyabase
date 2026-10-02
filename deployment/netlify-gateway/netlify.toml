@@ -1,0 +1,49 @@
+[build]
+  # scripts/prepare-services.sh installs the sibling service deps (cors,
+  # fount-js, bdo-js, sessionless-node, stripe, dayjs, ws, etc.) that
+  # ../services.js's imports pull in but that aren't in this gateway's
+  # own package.json — esbuild needs them resolvable from each imported
+  # file's node_modules tree before it can bundle. Runs on both a manual
+  # `netlify deploy` from a fresh clone and any CI-triggered deploy.
+  command = "bash scripts/prepare-services.sh"
+  functions = "netlify/functions"
+
+[functions]
+  # `zisi` = "zip-it-and-ship-it" without esbuild — packages the function
+  # with its resolved node_modules preserved, no bundling, no CJS
+  # transformation. We need this because:
+  #   - Several sibling services use top-level `await` in their
+  #     src/persistence/db.js init, which esbuild can't emit under its
+  #     default CJS output format.
+  #   - The bundled service tree pulls in file:-linked client packages
+  #     (addie-js) whose deps live at different nodes on the resolution
+  #     tree than esbuild expects; zisi's node-native resolution handles
+  #     that correctly.
+  # Cost is a larger function bundle + slower cold start, but this is a
+  # background service, not a latency-sensitive endpoint. jsdom (previously
+  # in external_node_modules for the esbuild+jsdom worker-file issue) no
+  # longer needs the exemption under zisi.
+  node_bundler = "zisi"
+  # Force-include each sibling service's package.json — zisi bundles the
+  # .js files it discovers via imports, but does NOT auto-include the
+  # sibling package.json that tells Node "these .js files are ESM"
+  # (`"type": "module"`). Without them, Node treats the bundled files as
+  # CJS and every `import` statement throws "Cannot use import statement
+  # outside a module" at runtime. Paths are relative to this netlify.toml.
+  # Trimmed to match the reduced service list in services.mjs (see
+  # its top-of-file comment for why the full 12-service bundle blows
+  # the Lambda 250MB code limit on netlify-packaging branches).
+  included_files = [
+    "../bdo/src/server/node/package.json",
+    "../addie/src/server/node/package.json",
+    "../fount/src/server/node/package.json",
+    "../eumachia/src/server/node/package.json"
+  ]
+
+# All 11 bundled services are dispatched by path prefix inside gateway.js's
+# own Express instance (see services.js) - forward every request to the one
+# function that wraps it with serverless-http.
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/gateway/:splat"
+  status = 200

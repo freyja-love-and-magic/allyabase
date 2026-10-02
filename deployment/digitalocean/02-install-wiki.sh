@@ -9,7 +9,7 @@ set -e
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
 
-PLUGIN_REPO="https://github.com/planet-nine-app/wiki-plugin-allyabase"
+PLUGIN_REPO="https://github.com/freyja-love-and-magic/wiki-plugin-allyabase"
 PLUGIN_TMP="/tmp/wiki-plugin-allyabase"
 
 echo "Installing wiki and wiki-security-sessionless globally..."

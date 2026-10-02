@@ -785,7 +785,7 @@ Planned additions:
 ## Contributing
 
 Caniblog is an open specification. Contributions welcome:
-- GitHub: [planet-nine-app/caniblog](https://github.com/planet-nine-app/caniblog)
+- GitHub: [freyja-love-and-magic/caniblog](https://github.com/freyja-love-and-magic/caniblog)
 - Issues: Feature requests and bug reports
 - Discussions: Best practices and implementations
 

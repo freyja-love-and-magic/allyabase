@@ -632,7 +632,7 @@ Planned additions:
 ## Contributing
 
 Canipub is an open specification. Contributions welcome:
-- GitHub: [planet-nine-app/canipub](https://github.com/planet-nine-app/canipub)
+- GitHub: [freyja-love-and-magic/canipub](https://github.com/freyja-love-and-magic/canipub)
 - Issues: Feature requests and bug reports
 - Discussions: Best practices and use cases
 

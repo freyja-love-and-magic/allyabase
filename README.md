@@ -1,6 +1,6 @@
 # allyabase
 
-![All your base are belong to us](https://github.com/planet-nine-app/allyabase/blob/main/site/images/all-your-base.jpg)
+![All your base are belong to us](https://github.com/freyja-love-and-magic/allyabase/blob/main/site/images/all-your-base.jpg)
 
 **allyabase** (named for an early oughts internet meme, which featured the quirkily translated game Zero Wing) is a playful jab at the BaaS (backend as a service) platforms in name, and a serious attempt at providing public backend infrastructure in form.
 In addition to referencing a time when the internet was weirder, it is meant as a (playful) reminder that BaaS is a thinly veiled data collecting mechanism where you get to pay for the privelage of handing your user's habits to advertisers for them to profit off of.
@@ -166,21 +166,21 @@ If you'd like to add an allyabase client, you should submit a PR with a video of
 
 This project would not be possible without the support and contributions of the excellent people of [Open Source Force][osf].
 
-[sessionless]: https://www.github.com/planet-nine-app/sessionless
-[magic]: https://www.github.com/planet-nine-app/magic
-[addie]: https://www.github.com/planet-nine-app/addie
-[aretha]: https://www.github.com/planet-nine-app/aretha
-[bdo]: https://www.github.com/planet-nine-app/bdo
-[continuebee]: https://www.github.com/planet-nine-app/continuebee
-[dolores]: https://www.github.com/planet-nine-app/dolores
-[fount]: https://www.github.com/planet-nine-app/fount
-[joan]: https://www.github.com/planet-nine-app/joan
-[julia]: https://www.github.com/planet-nine-app/julia
-[minnie]: https://www.github.com/planet-nine-app/minnie
-[pref]: https://www.github.com/planet-nine-app/pref
-[prof]: https://www.github.com/planet-nine-app/prof
-[sanora]: https://www.github.com/planet-nine-app/sanora-dot-club
-[juliachat]: https://www.github.com/planet-nine-app/JuliaChat
+[sessionless]: https://www.github.com/freyja-love-and-magic/sessionless
+[magic]: https://www.github.com/freyja-love-and-magic/magic
+[addie]: https://www.github.com/freyja-love-and-magic/addie
+[aretha]: https://www.github.com/freyja-love-and-magic/aretha
+[bdo]: https://www.github.com/freyja-love-and-magic/bdo
+[continuebee]: https://www.github.com/freyja-love-and-magic/continuebee
+[dolores]: https://www.github.com/freyja-love-and-magic/dolores
+[fount]: https://www.github.com/freyja-love-and-magic/fount
+[joan]: https://www.github.com/freyja-love-and-magic/joan
+[julia]: https://www.github.com/freyja-love-and-magic/julia
+[minnie]: https://www.github.com/freyja-love-and-magic/minnie
+[pref]: https://www.github.com/freyja-love-and-magic/pref
+[prof]: https://www.github.com/freyja-love-and-magic/prof
+[sanora]: https://www.github.com/freyja-love-and-magic/sanora-dot-club
+[juliachat]: https://www.github.com/freyja-love-and-magic/JuliaChat
 [osf]: https://opensourceforce.net
 [minecraft]: https://minecraft.fandom.com/wiki/Tutorials/Setting_up_a_server
 
